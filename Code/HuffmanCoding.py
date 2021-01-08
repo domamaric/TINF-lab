@@ -5,6 +5,14 @@ code = []
 
 
 class HuffmanTree:
+    """
+    Huffmanovo kodiranje 
+    ====================
+    Kodira pojedinačne simbole kodnim riječima promjenjive duljine,
+    ovisno o vjerojatnostima njihova pojavljivanja
+    >Podatkovna struktura algoritma je binarno stablo
+
+    """
     def __init__(self, left=None, right=None):
         self.left = left
         self.right = right
@@ -20,6 +28,13 @@ class HuffmanTree:
 
 
 def HuffmanCode(node, left=True, digit=''):
+    """
+    Algoritam stvaranja koda:
+        1. Pronađi dva simbola s najmanjim vjerojatnostima
+        2. Jednom od njih dodijeli simbol "0", drugom "1"
+        3. Kombiniraj ta dva simbola u jedan nadsimbol i zapiši ih kao dvije 
+           grane binarnog stabla, a nadsimbol kao račvanje iznad njih
+    """
     if type(node) is str:
         return {node: digit}
 
@@ -32,6 +47,14 @@ def HuffmanCode(node, left=True, digit=''):
 
 
 def CodeStatistics(frequencies, length, code_length):
+    """
+    Funkcija računa:
+        1. Srednju duljinu kodne riječi L(X) koristeći formulu sume 
+        vjerojatnosti pojavljivanja simbola i njihove duljine 
+        kodne riječi.
+        2. Entropiju koda, koju koristi za računanje učinkovitosti
+        koda kao omjer H(X)/L(X)
+    """
     probabilities = [float("{:.3f}".format(frequency[1]/length))
                      for frequency in frequencies]
     probabilities = sorted(probabilities, reverse=True)
@@ -46,9 +69,10 @@ def CodeStatistics(frequencies, length, code_length):
 
 
 def main():
+    # Učitaj simbole, te izračunaj duljinu simbola
     symbols = input("Unesite ulazne simbole: ")
     length = len(symbols)
-
+    #Ako nije uneseno ništa, prekini izvođenje programa
     if length == 0:
         print("Neispravan unos podataka. Pokušajte ponovno!")
         return
@@ -60,7 +84,7 @@ def main():
             frequencies[symbol] += 1
         else:
             frequencies[symbol] = 1
-
+    # Sortiraj frekvencije projavljivanja pojedinih simbola silazno
     frequencies = sorted(frequencies.items(),
                          key=lambda x: x[1], reverse=True)
 
