@@ -1,3 +1,9 @@
+import math
+
+global code
+code = []
+
+
 class HuffmanTree:
     def __init__(self, left=None, right=None):
         self.left = left
@@ -25,9 +31,27 @@ def HuffmanCode(node, left=True, digit=''):
     return huffman_code
 
 
+def CodeStatistics(frequencies, length, code_length):
+    probabilities = [float("{:.3f}".format(frequency[1]/length))
+                     for frequency in frequencies]
+    probabilities = sorted(probabilities, reverse=True)
+
+    mean_length = sum(
+        [a*b for a, b in zip(code_length, probabilities)])
+
+    entropy = -1 *sum([a*math.log2(a) for a in probabilities])
+
+    print("Srednja duljina kodne riječi: {:.3f}".format(mean_length))
+    print("Efikasnost koda: {:.3f}".format(entropy/mean_length))
+
+
 def main():
     symbols = input("Unesite ulazne simbole: ")
     length = len(symbols)
+
+    if length == 0:
+        print("Neispravan unos podataka. Pokušajte ponovno!")
+        return
 
     frequencies = {}
 
@@ -51,11 +75,15 @@ def main():
         nodes = sorted(nodes, key=lambda x: x[1], reverse=True)
 
     code = HuffmanCode(nodes[0][0])
+    code_length = []
 
-    print(' Znak | Kod     ')
+    print(' Znak | Kôd     ')
     print('----------------')
     for (char, frequency) in frequencies:
         print(' %-4r |%6s' % (char, code[char]))
+        code_length.append(len(code[char]))
+
+    CodeStatistics(frequencies, length, code_length)
 
 
 main()
