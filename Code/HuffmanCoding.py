@@ -1,7 +1,4 @@
-import math
-
-global code
-code = []
+from math import log2
 
 
 class HuffmanTree:
@@ -11,23 +8,23 @@ class HuffmanTree:
     Kodira pojedinačne simbole kodnim riječima promjenjive duljine,
     ovisno o vjerojatnostima njihova pojavljivanja
     >Podatkovna struktura algoritma je binarno stablo
-
     """
+
     def __init__(self, left=None, right=None):
         self.left = left
         self.right = right
 
     def children(self):
-        return (self.left, self.right)
+        return self.left, self.right
 
     def nodes(self):
-        return (self.left, self.right)
+        return self.left, self.right
 
-    def __str__(self):
+    def __repr__(self):
         return '%s_%s' % (self.left, self.right)
 
 
-def HuffmanCode(node, left=True, digit=''):
+def huffman_coding(node, left=True, digit=''):
     """
     Algoritam stvaranja koda:
         1. Pronađi dva simbola s najmanjim vjerojatnostima
@@ -40,13 +37,13 @@ def HuffmanCode(node, left=True, digit=''):
 
     (l, r) = node.children()
     huffman_code = {}
-    huffman_code.update(HuffmanCode(l, True, digit + '0'))
-    huffman_code.update(HuffmanCode(r, False, digit + '1'))
+    huffman_code.update(huffman_coding(l, True, digit + '0'))
+    huffman_code.update(huffman_coding(r, False, digit + '1'))
 
     return huffman_code
 
 
-def CodeStatistics(frequencies, length, code_length):
+def code_statistics(frequencies, length, code_length):
     """
     Funkcija računa:
         1. Srednju duljinu kodne riječi L(X) koristeći formulu sume 
@@ -55,24 +52,27 @@ def CodeStatistics(frequencies, length, code_length):
         2. Entropiju koda, koju koristi za računanje učinkovitosti
         koda kao omjer H(X)/L(X)
     """
-    probabilities = [float("{:.3f}".format(frequency[1]/length))
+    probabilities = [float("{:.3f}".format(frequency[1] / length))
                      for frequency in frequencies]
     probabilities = sorted(probabilities, reverse=True)
 
     mean_length = sum(
-        [a*b for a, b in zip(code_length, probabilities)])
+        [a * b for a, b in zip(code_length, probabilities)])
 
-    entropy = -1 *sum([a*math.log2(a) for a in probabilities])
-
+    entropy = -1 * sum([a * log2(a) for a in probabilities])
     print("Srednja duljina kodne riječi: {:.3f}".format(mean_length))
-    print("Efikasnost koda: {:.3f}".format(entropy/mean_length))
+
+    try:
+        print("Efikasnost koda: {:.3f}".format(entropy / mean_length))
+    except ZeroDivisionError:
+        return
 
 
 def main():
     # Učitaj simbole, te izračunaj duljinu simbola
     symbols = input("Unesite ulazne simbole: ")
     length = len(symbols)
-    #Ako nije uneseno ništa, prekini izvođenje programa
+    # Ako nije uneseno ništa, prekini izvođenje programa
     if length == 0:
         print("Neispravan unos podataka. Pokušajte ponovno!")
         return
@@ -98,7 +98,7 @@ def main():
 
         nodes = sorted(nodes, key=lambda x: x[1], reverse=True)
 
-    code = HuffmanCode(nodes[0][0])
+    code = huffman_coding(nodes[0][0])
     code_length = []
 
     print(' Znak | Kôd     ')
@@ -107,7 +107,8 @@ def main():
         print(' %-4r |%6s' % (char, code[char]))
         code_length.append(len(code[char]))
 
-    CodeStatistics(frequencies, length, code_length)
+    code_statistics(frequencies, length, code_length)
 
 
-main()
+if __name__ == '__main__':
+    main()
